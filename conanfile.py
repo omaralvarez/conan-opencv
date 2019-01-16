@@ -35,7 +35,8 @@ class OpenCVConan(ConanFile):
                        "openexr": False,
                        "gtk": 3,
                        "ffmpeg": True,
-                       "baseline": "SSE2"}
+                       "baseline": "SSE2",
+                       "ffmpeg:shared": True}
     exports_sources = ["CMakeLists.txt"]
     generators = "cmake"
     description = "OpenCV (Open Source Computer Vision Library) is an open source computer vision and machine " \
