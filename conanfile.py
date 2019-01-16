@@ -7,7 +7,7 @@ import shutil
 
 class OpenCVConan(ConanFile):
     name = "opencv"
-    version = "4.0.0"
+    version = "4.0.1"
     license = "LGPL"
     homepage = "https://github.com/opencv/opencv"
     url = "https://github.com/conan-community/conan-opencv.git"
@@ -21,7 +21,9 @@ class OpenCVConan(ConanFile):
                "png": [True, False],
                "jasper": [True, False],
                "openexr": [True, False],
-               "gtk": [None, 2, 3]}
+               "gtk": [None, 2, 3],
+               "ffmpeg": [True, False],
+               "baseline": ["SSE2", "SSE4_1", "AVX", "AVX2"]}
     default_options = {"shared": False,
                        "fPIC": True,
                        "contrib": False,
@@ -30,8 +32,10 @@ class OpenCVConan(ConanFile):
                        "webp": True,
                        "png": True,
                        "jasper": True,
-                       "openexr": True,
-                       "gtk": 3}
+                       "openexr": False,
+                       "gtk": 3,
+                       "ffmpeg": True,
+                       "baseline": "SSE2"}
     exports_sources = ["CMakeLists.txt"]
     generators = "cmake"
     description = "OpenCV (Open Source Computer Vision Library) is an open source computer vision and machine " \
@@ -108,6 +112,8 @@ class OpenCVConan(ConanFile):
             self.requires.add('jasper/2.0.14@conan/stable')
         if self.options.openexr:
             self.requires.add('openexr/2.3.0@conan/stable')
+        if self.options.ffmpeg:
+            self.requires.add('ffmpeg/4.0.2@bincrafters/stable')
 
     def _configure_cmake(self):
         cmake = CMake(self)
@@ -146,9 +152,10 @@ class OpenCVConan(ConanFile):
         cmake.definitions['WITH_JASPER'] = self.options.jasper
         cmake.definitions['WITH_OPENEXR'] = self.options.openexr
         cmake.definitions['WITH_PROTOBUF'] = False
-        cmake.definitions['WITH_FFMPEG'] = False
+        cmake.definitions['WITH_FFMPEG'] = self.options.ffmpeg
         cmake.definitions['WITH_QUIRC'] = False
         cmake.definitions["WITH_CAROTENE"] = False
+        cmake.definitions["CPU_BASELINE"] = self.options.baseline
 
         if self.options.openexr:
             cmake.definitions['OPENEXR_ROOT'] = self.deps_cpp_info['openexr'].rootpath
