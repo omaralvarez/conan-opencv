@@ -115,6 +115,7 @@ class OpenCVConan(ConanFile):
                     packages.append('libgtk2.0-dev%s' % arch_suffix)
                 elif self.options.gtk == 3:
                     packages.append('libgtk-3-dev%s' % arch_suffix)
+                    packages.append('libselinux-dev%s' % arch_suffix)
                 for package in packages:
                     installer.install(package)
             elif tools.os_info.with_yum:
